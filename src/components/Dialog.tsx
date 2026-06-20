@@ -168,7 +168,7 @@ export function EditTimeEntryDialog({
                 value={selectedMatterId}
                 onValueChange={handleMatterChange}
               >
-                <SelectTrigger className="bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
+                <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
                   <SelectValue placeholder="Find a matter by matter name or client" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a2638] border-[#2f3f56] text-white">
@@ -188,13 +188,13 @@ export function EditTimeEntryDialog({
             {/* Activity category */}
             <div className="space-y-1.5">
               <p className="text-slate-300 mb-1.5 font-medium">
-                Activity category
+                Activity Category
               </p>
               <Select
                 value={activityCategory}
                 onValueChange={setActivityCategory}
               >
-                <SelectTrigger className="bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
+                <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
                   <SelectValue placeholder="Find a category" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#1a2638] border-[#2f3f56] text-white">

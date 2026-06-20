@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { isDbConfigured } from "@/lib/mongodb";
-import {
-  createTimeEntry,
-  getDefaultUserId
-} from "@/lib/services/time-entry";
+import { isDbConfigured, connectDB } from "@/lib/mongodb";
+import { TimeEntry } from "@/models/TimeEntry";
+import { User } from "@/models/User";
 
 export async function POST(request: Request) {
   if (!isDbConfigured()) {
@@ -14,54 +12,63 @@ export async function POST(request: Request) {
   }
 
   try {
+    await connectDB();
+
     const body = await request.json();
     const {
       matterId,
+      userId,
       clientFacingDescription = "",
       internalNote = "",
       durationMs,
-      rate,
-      timer
-    } = body as {
-      matterId: string;
-      clientFacingDescription?: string;
-      internalNote?: string;
-      durationMs?: number;
-      rate?: number;
-      timer?: {
-        startedAt: number;
-        elapsedBeforePause: number;
-        isPaused: boolean;
-      };
-    };
+      rate = 0,
+      activityCategory = "",
+      date,
+      nonBillable = false,
+      writtenOff = false,
+      showOnBill = true
+    } = body;
 
     if (!matterId) {
-      return NextResponse.json({ error: "matterId is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "matterId is required" },
+        { status: 400 }
+      );
     }
 
-    const resolvedDuration =
-      durationMs ??
-      (timer
-        ? timer.isPaused
-          ? timer.elapsedBeforePause
-          : timer.elapsedBeforePause + (Date.now() - timer.startedAt)
-        : 0);
-
-    if (resolvedDuration <= 0) {
+    if (!durationMs || durationMs <= 0) {
       return NextResponse.json(
         { error: "durationMs must be greater than 0" },
         { status: 400 }
       );
     }
 
-    const resolvedUserId = body.userId || await getDefaultUserId();
-    const entry = await createTimeEntry({
+    let resolvedUserId = userId;
+    if (!resolvedUserId) {
+      const defaultUser = await User.findOne().sort({ createdAt: 1 });
+      if (!defaultUser) {
+        return NextResponse.json({ error: "No users found" }, { status: 400 });
+      }
+      resolvedUserId = defaultUser._id.toString();
+    }
+
+    const finalRate = nonBillable ? 0 : Number(rate);
+    const hours = durationMs / 3600000;
+    const lineAmount = nonBillable ? 0 : Number((hours * finalRate).toFixed(2));
+
+    const entry = await TimeEntry.create({
       matterId,
       userId: resolvedUserId,
       clientFacingDescription,
       internalNote,
-      durationMs: resolvedDuration,
-      rate
+      durationMs,
+      rate: finalRate,
+      lineAmount,
+      activityCategory,
+      date: date ? new Date(date) : new Date(),
+      nonBillable,
+      writtenOff,
+      showOnBill
     });
 
     return NextResponse.json({
@@ -71,7 +78,8 @@ export async function POST(request: Request) {
       durationMs: entry.durationMs
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to save time entry";
+    const message =
+      err instanceof Error ? err.message : "Failed to save time entry";
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }

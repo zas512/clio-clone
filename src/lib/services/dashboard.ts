@@ -6,12 +6,8 @@ import type {
   Lead as LeadDTO,
   Matter as MatterDTO
 } from "@/types";
-import {
-  mockDeadlines,
-  mockInvoices,
-  mockLeads,
-  mockMatters
-} from "@/data";
+import { mockDeadlines, mockInvoices, mockLeads, mockMatters } from "@/data";
+import { isDbConfigured } from "../mongodb";
 
 const STALE_THRESHOLD_DAYS = 14;
 
@@ -151,6 +147,8 @@ function getMockDashboard(): Omit<DashboardData, "source"> {
 }
 
 export async function getMattersForTimer(): Promise<MatterDTO[]> {
+  if (!isDbConfigured()) return mockMatters;
+
   try {
     await connectDB();
     const matters = (await Matter.find({ engagementSigned: true })
@@ -159,8 +157,7 @@ export async function getMattersForTimer(): Promise<MatterDTO[]> {
       .populate("responsibleAttorneyId")
       .lean()) as unknown as PopulatedMatter[];
 
-    if (matters.length === 0) return mockMatters;
-
+    // empty result is a real, valid state — return it as-is
     return matters.map((m) => ({
       id: m._id.toString(),
       name: m.name,
@@ -173,6 +170,7 @@ export async function getMattersForTimer(): Promise<MatterDTO[]> {
       lastActivityAt: new Date(m.lastActivityAt).toISOString().slice(0, 10)
     }));
   } catch {
+    // DB connection genuinely failed mid-request — this is the legitimate fallback case
     return mockMatters;
   }
 }
