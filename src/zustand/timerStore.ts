@@ -21,12 +21,20 @@ type TimerStore = {
     field: "clientFacingDescription" | "internalNote",
     value: string
   ) => void;
+  updateTimer: (
+    id: string,
+    updates: Partial<Omit<RunningTimer, "id">>
+  ) => void;
   stopTimer: (id: string) => RunningTimer | undefined;
   discardTimer: (id: string) => void;
+  isMobileSidebarOpen: boolean;
+  setMobileSidebarOpen: (open: boolean) => void;
 };
 
 export const useTimerStore = create<TimerStore>((set, get) => ({
   timers: [],
+  isMobileSidebarOpen: false,
+  setMobileSidebarOpen: (open) => set({ isMobileSidebarOpen: open }),
 
   startTimer: (matterId, matterName) => {
     const id = crypto.randomUUID();
@@ -73,6 +81,14 @@ export const useTimerStore = create<TimerStore>((set, get) => ({
     set((state) => ({
       timers: state.timers.map((t) =>
         t.id === id ? { ...t, [field]: value } : t
+      )
+    }));
+  },
+
+  updateTimer: (id, updates) => {
+    set((state) => ({
+      timers: state.timers.map((t) =>
+        t.id === id ? { ...t, ...updates } : t
       )
     }));
   },

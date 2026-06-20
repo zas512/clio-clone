@@ -18,8 +18,8 @@ type CreateTimeEntryInput = {
   durationMs: number;
 };
 
-export async function createTimeEntry(input: CreateTimeEntryInput) {
-  const rate = await resolveHourlyRate({
+export async function createTimeEntry(input: CreateTimeEntryInput & { rate?: number }) {
+  const rate = input.rate !== undefined ? input.rate : await resolveHourlyRate({
     matterId: input.matterId,
     userId: input.userId
   });

@@ -20,12 +20,14 @@ export async function POST(request: Request) {
       clientFacingDescription = "",
       internalNote = "",
       durationMs,
+      rate,
       timer
     } = body as {
       matterId: string;
       clientFacingDescription?: string;
       internalNote?: string;
       durationMs?: number;
+      rate?: number;
       timer?: {
         startedAt: number;
         elapsedBeforePause: number;
@@ -52,13 +54,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const userId = await getDefaultUserId();
+    const resolvedUserId = body.userId || await getDefaultUserId();
     const entry = await createTimeEntry({
       matterId,
-      userId,
+      userId: resolvedUserId,
       clientFacingDescription,
       internalNote,
-      durationMs: resolvedDuration
+      durationMs: resolvedDuration,
+      rate
     });
 
     return NextResponse.json({

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { TopBar } from "@/components/TopBar";
+import { Sidebar } from "@/components/Sidebar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn(
+        "dark",
         "h-full",
         "antialiased",
         geistSans.variable,
@@ -38,9 +40,14 @@ export default function RootLayout({
         inter.variable
       )}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="h-screen flex flex-col bg-[#090f1d] text-slate-100 w-full overflow-hidden">
         <TopBar />
-        <main className="flex-1 bg-muted/30 p-6">{children}</main>
+        <div className="flex flex-1 min-w-0 min-h-0">
+          <Sidebar />
+          <main className="flex-1 min-w-0 min-h-0 bg-[#0b1320] p-6 overflow-y-auto">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );
