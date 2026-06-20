@@ -14,16 +14,6 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6 text-slate-200">
-      {data.source === "mock" && (
-        <p className="rounded-md border border-dashed border-[#2f3f56] px-4 py-3 text-sm text-slate-400 bg-[#121c2c]/40">
-          Using mock data — add{" "}
-          <code className="text-xs text-blue-400">MONGODB_URI</code> to{" "}
-          <code className="text-xs text-blue-400">.env.local</code>, then{" "}
-          <code className="text-xs text-blue-400">POST /api/seed</code> to load
-          demo records.
-        </p>
-      )}
-
       {/* Dashboard Tabs Header */}
       <div className="flex border-b border-[#1d2c3f] pb-px">
         <button className="border-b-2 border-blue-500 pb-3 text-sm font-semibold text-white px-1 cursor-pointer">
