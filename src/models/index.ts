@@ -1,0 +1,10 @@
+export { User, type IUser } from "./User";
+export { PracticeArea, type IPracticeArea } from "./PracticeArea";
+export { Client, type IClient } from "./Client";
+export { Lead, type ILead, type LeadStatus } from "./Lead";
+export { Matter, type IMatter, type BillingType } from "./Matter";
+export { TimeEntry, type ITimeEntry } from "./TimeEntry";
+export { Deadline, type IDeadline } from "./Deadline";
+export { Invoice, type IInvoice, type InvoiceStatus } from "./Invoice";
+export { TimelineEntry, type ITimelineEntry } from "./TimelineEntry";
+export { AuditLog, type IAuditLog } from "./AuditLog";
