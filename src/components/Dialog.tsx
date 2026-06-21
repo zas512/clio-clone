@@ -1,5 +1,5 @@
 "use client";
-import { Play, Pause, AlertCircle, HelpCircle } from "lucide-react";
+import { Play, Pause, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -68,7 +68,6 @@ export function EditTimeEntryDialog({
   dialogOpen,
   setDialogOpen,
   activeTimer,
-  matters,
   users,
   saveError,
   selectedMatterId,
@@ -125,7 +124,7 @@ export function EditTimeEntryDialog({
                   setIsManualDuration(true);
                   setManualDurationHours(e.target.value);
                 }}
-                className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-md font-mono"
+                className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 rounded-md font-mono"
               />
               <button
                 onClick={toggleTimerPlayback}
@@ -161,7 +160,7 @@ export function EditTimeEntryDialog({
               </SelectTrigger>
               <SelectContent
                 position="popper"
-                className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
+                className="z-100 bg-[#1a2638] border border-[#2f3f56] text-white"
               >
                 <SelectItem value="Research" className="hover:bg-[#202f46]">
                   Matter 1 - Client A
@@ -190,7 +189,7 @@ export function EditTimeEntryDialog({
               </SelectTrigger>
               <SelectContent
                 position="popper"
-                className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
+                className="z-100 bg-[#1a2638] border border-[#2f3f56] text-white"
               >
                 <SelectItem value="Research" className="hover:bg-[#202f46]">
                   Research
@@ -226,7 +225,7 @@ export function EditTimeEntryDialog({
               type="date"
               value={dateStr}
               onChange={(e) => setDateStr(e.target.value)}
-              className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-md scheme-dark"
+              className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 rounded-md scheme-dark"
             />
           </div>
 
@@ -237,7 +236,7 @@ export function EditTimeEntryDialog({
               value={clientFacingDescription}
               onChange={(e) => handleDescriptionChange(e.target.value)}
               placeholder="Client-facing notes..."
-              className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-md h-28 resize-none"
+              className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 rounded-md h-28 resize-none"
             />
           </div>
 
@@ -250,10 +249,9 @@ export function EditTimeEntryDialog({
               <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md">
                 <SelectValue placeholder="Select user" />
               </SelectTrigger>
-              {/* FIX 2: Changed z-100 to Tailwind-valid z-[100] */}
               <SelectContent
                 position="popper"
-                className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
+                className="z-100 bg-[#1a2638] border border-[#2f3f56] text-white"
               >
                 {users.map((u) => (
                   <SelectItem

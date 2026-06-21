@@ -8,8 +8,8 @@ import {
 
 const timeEntrySchema = new Schema(
   {
-    matterId: { type: Schema.Types.ObjectId, ref: "Matter", required: true },
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    matterId: { type: String, required: true },
+    userId: { type: String, required: true },
     activityCategory: { type: String, default: "" },
     date: { type: Date, default: Date.now },
     clientFacingDescription: { type: String, default: "" },
@@ -21,7 +21,7 @@ const timeEntrySchema = new Schema(
     writtenOff: { type: Boolean, default: false },
     showOnBill: { type: Boolean, default: true },
     invoiced: { type: Boolean, default: false },
-    invoiceId: { type: Schema.Types.ObjectId, ref: "Invoice" }
+    invoiceId: { type: String }
   },
   { timestamps: true }
 );
