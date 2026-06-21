@@ -159,20 +159,19 @@ export function EditTimeEntryDialog({
               <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
                 <SelectValue placeholder="Find a matter by matter name or client" />
               </SelectTrigger>
-              {/* FIX 2: Changed z-100 to Tailwind-valid z-[100] so it parses in production */}
               <SelectContent
                 position="popper"
                 className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
               >
-                {matters.map((m) => (
-                  <SelectItem
-                    key={m.id}
-                    value={m.id}
-                    className="hover:bg-[#202f46] focus:bg-[#202f46] text-slate-200"
-                  >
-                    {m.name} ({m.clientName})
-                  </SelectItem>
-                ))}
+                <SelectItem value="Research" className="hover:bg-[#202f46]">
+                  Matter 1 - Client A
+                </SelectItem>
+                <SelectItem value="Drafting" className="hover:bg-[#202f46]">
+                  Matter 2 - Client B
+                </SelectItem>
+                <SelectItem value="Reviewing" className="hover:bg-[#202f46]">
+                  Matter 3 - Client C
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -189,7 +188,6 @@ export function EditTimeEntryDialog({
               <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
                 <SelectValue placeholder="Find a category" />
               </SelectTrigger>
-              {/* FIX 2: Changed z-100 to Tailwind-valid z-[100] */}
               <SelectContent
                 position="popper"
                 className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
