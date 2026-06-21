@@ -103,7 +103,17 @@ export function EditTimeEntryDialog({
 }: Readonly<Props>) {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent className="max-w-2xl bg-[#1a2638] text-white border border-[#2c3d52] p-0 rounded-xl overflow-hidden shadow-2xl">
+      <DialogContent
+        className="max-w-2xl bg-[#1a2638] text-white border border-[#2c3d52] p-0 rounded-xl overflow-hidden shadow-2xl"
+        onPointerDownOutside={(e) => {
+          const target = e.target as HTMLElement;
+          if (
+            target.closest('[data-slot="select-content"], [role="listbox"]')
+          ) {
+            e.preventDefault();
+          }
+        }}
+      >
         <DialogHeader className="p-5 border-b border-[#2c3d52] flex flex-row items-center justify-between">
           <DialogTitle className="text-xl font-bold tracking-wide">
             Edit time entry
@@ -171,7 +181,10 @@ export function EditTimeEntryDialog({
                 <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
                   <SelectValue placeholder="Find a matter by matter name or client" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a2638] border-[#2f3f56] text-white">
+                <SelectContent
+                  position="popper"
+                  className="z-100 bg-[#1a2638] border border-[#2f3f56] text-white"
+                >
                   {matters.map((m) => (
                     <SelectItem
                       key={m.id}
@@ -184,7 +197,6 @@ export function EditTimeEntryDialog({
                 </SelectContent>
               </Select>
             </div>
-
             {/* Activity category */}
             <div className="space-y-1.5">
               <p className="text-slate-300 mb-1.5 font-medium">
@@ -197,7 +209,10 @@ export function EditTimeEntryDialog({
                 <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
                   <SelectValue placeholder="Find a category" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a2638] border-[#2f3f56] text-white">
+                <SelectContent
+                  position="popper"
+                  className="z-100 bg-[#1a2638] border border-[#2f3f56] text-white"
+                >
                   <SelectItem value="Research" className="hover:bg-[#202f46]">
                     Research
                   </SelectItem>
@@ -256,7 +271,10 @@ export function EditTimeEntryDialog({
                 <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md">
                   <SelectValue placeholder="Select user" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a2638] border-[#2f3f56] text-white">
+                <SelectContent
+                  position="popper"
+                  className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
+                >
                   {users.map((u) => (
                     <SelectItem
                       key={u.id}
