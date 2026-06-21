@@ -3,12 +3,7 @@ import { Play, Pause, AlertCircle, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle
-} from "@/components/ui/dialog";
+import { Dialog } from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -103,292 +98,274 @@ export function EditTimeEntryDialog({
 }: Readonly<Props>) {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-      <DialogContent
-        className="max-w-2xl bg-[#1a2638] text-white border border-[#2c3d52] p-0 rounded-xl overflow-hidden shadow-2xl"
-        onPointerDownOutside={(e) => {
-          const target = e.target as HTMLElement;
-          if (
-            target.closest('[data-slot="select-content"], [role="listbox"]')
-          ) {
-            e.preventDefault();
-          }
-        }}
-      >
-        <DialogHeader className="p-5 border-b border-[#2c3d52] flex flex-row items-center justify-between">
-          <DialogTitle className="text-xl font-bold tracking-wide">
-            Edit time entry
-          </DialogTitle>
-        </DialogHeader>
+      {/* Form */}
+      <div className="p-6 space-y-5 text-sm">
+        <p className="text-xl font-semibold">Edit Time Entry</p>
+        {saveError && (
+          <div className="bg-red-950/50 border border-red-500/50 text-red-200 p-3 rounded-md flex items-center gap-2 text-xs">
+            <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
+            <span>{saveError}</span>
+          </div>
+        )}
 
-        {/* Form */}
-        <div className="p-6 space-y-5 text-sm">
-          {saveError && (
-            <div className="bg-red-950/50 border border-red-500/50 text-red-200 p-3 rounded-md flex items-center gap-2 text-xs">
-              <AlertCircle className="h-4 w-4 shrink-0 text-red-400" />
-              <span>{saveError}</span>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Duration field */}
-            <div className="space-y-1.5">
-              <label
-                htmlFor="duration"
-                className="text-slate-300 font-medium flex items-center gap-1.5"
-              >
-                Duration
-              </label>
-              <div className="flex gap-2">
-                <Input
-                  type="text"
-                  value={displayHoursStr}
-                  onChange={(e) => {
-                    setIsManualDuration(true);
-                    setManualDurationHours(e.target.value);
-                  }}
-                  className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-md font-mono"
-                />
-                <button
-                  onClick={toggleTimerPlayback}
-                  className="flex items-center gap-1.5 bg-[#132238] hover:bg-[#202f46] border border-[#2f3f56] text-white px-4 py-2 rounded-md font-mono shrink-0 select-none text-xs"
-                >
-                  {activeTimer && !activeTimer.isPaused ? (
-                    <>
-                      <Pause className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-                      <span>{formatDuration(getElapsedMs(activeTimer))}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Play className="h-3.5 w-3.5 text-green-400 fill-green-400" />
-                      <span>
-                        {activeTimer
-                          ? formatDuration(getElapsedMs(activeTimer))
-                          : "00:00:00"}
-                      </span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            {/* Matter field */}
-            <div className="space-y-1.5">
-              <p className="text-slate-300 mb-1.5 font-medium">Matter</p>
-              <Select
-                value={selectedMatterId}
-                onValueChange={handleMatterChange}
-              >
-                <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
-                  <SelectValue placeholder="Find a matter by matter name or client" />
-                </SelectTrigger>
-                <SelectContent
-                  position="popper"
-                  className="z-100 bg-[#1a2638] border border-[#2f3f56] text-white"
-                >
-                  {matters.map((m) => (
-                    <SelectItem
-                      key={m.id}
-                      value={m.id}
-                      className="hover:bg-[#202f46] focus:bg-[#202f46] text-slate-200"
-                    >
-                      {m.name} ({m.clientName})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            {/* Activity category */}
-            <div className="space-y-1.5">
-              <p className="text-slate-300 mb-1.5 font-medium">
-                Activity Category
-              </p>
-              <Select
-                value={activityCategory}
-                onValueChange={setActivityCategory}
-              >
-                <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
-                  <SelectValue placeholder="Find a category" />
-                </SelectTrigger>
-                <SelectContent
-                  position="popper"
-                  className="z-100 bg-[#1a2638] border border-[#2f3f56] text-white"
-                >
-                  <SelectItem value="Research" className="hover:bg-[#202f46]">
-                    Research
-                  </SelectItem>
-                  <SelectItem value="Drafting" className="hover:bg-[#202f46]">
-                    Drafting
-                  </SelectItem>
-                  <SelectItem value="Reviewing" className="hover:bg-[#202f46]">
-                    Reviewing
-                  </SelectItem>
-                  <SelectItem
-                    value="Client Meeting"
-                    className="hover:bg-[#202f46]"
-                  >
-                    Client Meeting
-                  </SelectItem>
-                  <SelectItem
-                    value="Court Appearance"
-                    className="hover:bg-[#202f46]"
-                  >
-                    Court Appearance
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Date */}
-            <div className="space-y-1.5">
-              <p className="text-slate-300 mb-1.5 font-medium">
-                Date <span className="text-red-400">*</span>
-              </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* Duration field */}
+          <div className="space-y-1.5">
+            <label
+              htmlFor="duration"
+              className="text-slate-300 font-medium flex items-center gap-1.5"
+            >
+              Duration
+            </label>
+            <div className="flex gap-2">
               <Input
-                type="date"
-                value={dateStr}
-                onChange={(e) => setDateStr(e.target.value)}
-                className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-md scheme-dark"
+                type="text"
+                value={displayHoursStr}
+                onChange={(e) => {
+                  setIsManualDuration(true);
+                  setManualDurationHours(e.target.value);
+                }}
+                className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-md font-mono"
               />
+              <button
+                onClick={toggleTimerPlayback}
+                className="flex items-center gap-1.5 bg-[#132238] hover:bg-[#202f46] border border-[#2f3f56] text-white px-4 py-2 rounded-md font-mono shrink-0 select-none text-xs"
+              >
+                {activeTimer && !activeTimer.isPaused ? (
+                  <>
+                    <Pause className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
+                    <span>{formatDuration(getElapsedMs(activeTimer))}</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-3.5 w-3.5 text-green-400 fill-green-400" />
+                    <span>
+                      {activeTimer
+                        ? formatDuration(getElapsedMs(activeTimer))
+                        : "00:00:00"}
+                    </span>
+                  </>
+                )}
+              </button>
             </div>
+          </div>
 
-            {/* Description */}
-            <div className="space-y-1.5 md:row-span-2">
-              <p className="text-slate-300 mb-1.5 font-medium">Description</p>
-              <Textarea
-                value={clientFacingDescription}
-                onChange={(e) => handleDescriptionChange(e.target.value)}
-                placeholder="Client-facing notes..."
-                className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-md h-28 resize-none"
-              />
-            </div>
+          {/* Matter field */}
+          <div className="space-y-1.5">
+            <p className="text-slate-300 mb-1.5 font-medium">
+              Matter <span className="text-red-400">*</span>
+            </p>
+            <Select value={selectedMatterId} onValueChange={handleMatterChange}>
+              <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
+                <SelectValue placeholder="Find a matter by matter name or client" />
+              </SelectTrigger>
+              {/* FIX 2: Changed z-100 to Tailwind-valid z-[100] so it parses in production */}
+              <SelectContent
+                position="popper"
+                className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
+              >
+                {matters.map((m) => (
+                  <SelectItem
+                    key={m.id}
+                    value={m.id}
+                    className="hover:bg-[#202f46] focus:bg-[#202f46] text-slate-200"
+                  >
+                    {m.name} ({m.clientName})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-            {/* Firm user */}
-            <div className="space-y-1.5">
-              <p className="text-slate-300 mb-1.5 font-medium">
-                Firm user <span className="text-red-400">*</span>
-              </p>
-              <Select value={selectedUserId} onValueChange={handleUserChange}>
-                <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md">
-                  <SelectValue placeholder="Select user" />
-                </SelectTrigger>
-                <SelectContent
-                  position="popper"
-                  className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
+          {/* Activity category */}
+          <div className="space-y-1.5">
+            <p className="text-slate-300 mb-1.5 font-medium">
+              Activity Category
+            </p>
+            <Select
+              value={activityCategory}
+              onValueChange={setActivityCategory}
+            >
+              <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md text-left truncate">
+                <SelectValue placeholder="Find a category" />
+              </SelectTrigger>
+              {/* FIX 2: Changed z-100 to Tailwind-valid z-[100] */}
+              <SelectContent
+                position="popper"
+                className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
+              >
+                <SelectItem value="Research" className="hover:bg-[#202f46]">
+                  Research
+                </SelectItem>
+                <SelectItem value="Drafting" className="hover:bg-[#202f46]">
+                  Drafting
+                </SelectItem>
+                <SelectItem value="Reviewing" className="hover:bg-[#202f46]">
+                  Reviewing
+                </SelectItem>
+                <SelectItem
+                  value="Client Meeting"
+                  className="hover:bg-[#202f46]"
                 >
-                  {users.map((u) => (
-                    <SelectItem
-                      key={u.id}
-                      value={u.id}
-                      className="hover:bg-[#202f46]"
-                    >
-                      {u.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                  Client Meeting
+                </SelectItem>
+                <SelectItem
+                  value="Court Appearance"
+                  className="hover:bg-[#202f46]"
+                >
+                  Court Appearance
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            {/* Rate field */}
-            <div className="space-y-1.5">
-              <p className="text-slate-300 font-medium flex items-center gap-1">
-                Rate <span className="text-red-400">*</span>
-              </p>
-              <div className="flex rounded-md overflow-hidden bg-input/30 border border-[#2f3f56] flex-1">
-                <div className="text-[#94a3b8] px-3 py-2 flex items-center text-xs font-semibold select-none border-r border-[#2f3f56]">
-                  $
-                </div>
-                <input
-                  type="text"
-                  disabled={nonBillable}
-                  value={nonBillable ? "0.00" : rateStr}
-                  onChange={(e) => setRateStr(e.target.value)}
-                  className="border-none text-white focus-visible:ring-0 focus-visible:outline-none focus:outline-none shadow-none rounded-none text-center"
-                />
-                <div className="text-[#94a3b8] px-3 w-max py-2 flex items-center text-xs font-semibold whitespace-nowrap select-none border-l border-[#2f3f56]">
-                  per hr
-                </div>
+          {/* Date */}
+          <div className="space-y-1.5">
+            <p className="text-slate-300 mb-1.5 font-medium">
+              Date <span className="text-red-400">*</span>
+            </p>
+            <Input
+              type="date"
+              value={dateStr}
+              onChange={(e) => setDateStr(e.target.value)}
+              className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-md scheme-dark"
+            />
+          </div>
+
+          {/* Description */}
+          <div className="space-y-1.5 md:row-span-2">
+            <p className="text-slate-300 mb-1.5 font-medium">Description</p>
+            <Textarea
+              value={clientFacingDescription}
+              onChange={(e) => handleDescriptionChange(e.target.value)}
+              placeholder="Client-facing notes..."
+              className="bg-[#132238] border-[#2f3f56] text-white focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 rounded-md h-28 resize-none"
+            />
+          </div>
+
+          {/* Firm user */}
+          <div className="space-y-1.5">
+            <p className="text-slate-300 mb-1.5 font-medium">
+              Firm user <span className="text-red-400">*</span>
+            </p>
+            <Select value={selectedUserId} onValueChange={handleUserChange}>
+              <SelectTrigger className="w-full bg-[#132238] border-[#2f3f56] text-white focus:ring-1 focus:ring-blue-500 rounded-md">
+                <SelectValue placeholder="Select user" />
+              </SelectTrigger>
+              {/* FIX 2: Changed z-100 to Tailwind-valid z-[100] */}
+              <SelectContent
+                position="popper"
+                className="z-[100] bg-[#1a2638] border border-[#2f3f56] text-white"
+              >
+                {users.map((u) => (
+                  <SelectItem
+                    key={u.id}
+                    value={u.id}
+                    className="hover:bg-[#202f46]"
+                  >
+                    {u.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Rate field */}
+          <div className="space-y-1.5">
+            <p className="text-slate-300 font-medium flex items-center gap-1">
+              Rate <span className="text-red-400">*</span>
+            </p>
+            <div className="flex rounded-md overflow-hidden bg-input/30 border border-[#2f3f56] flex-1">
+              <div className="text-[#94a3b8] px-3 py-2 flex items-center text-xs font-semibold select-none border-r border-[#2f3f56]">
+                $
+              </div>
+              <input
+                type="text"
+                disabled={nonBillable}
+                value={nonBillable ? "0.00" : rateStr}
+                onChange={(e) => setRateStr(e.target.value)}
+                className="border-none text-white focus-visible:ring-0 focus-visible:outline-none focus:outline-none shadow-none rounded-none text-center"
+              />
+              <div className="text-[#94a3b8] px-3 w-max py-2 flex items-center text-xs font-semibold whitespace-nowrap select-none border-l border-[#2f3f56]">
+                per hr
               </div>
             </div>
           </div>
-
-          {/* Checkboxes Row */}
-          <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2 border-t border-[#2c3d52]/50 text-slate-300">
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={nonBillable}
-                onChange={(e) => setNonBillable(e.target.checked)}
-                className="rounded border-[#2f3f56] text-[#005bbb] focus:ring-offset-[#1a2638] bg-[#132238] h-4 w-4"
-              />
-              <span className="flex items-center gap-1">
-                Non-billable{" "}
-                <HelpCircle className="h-3.5 w-3.5 text-blue-400" />
-              </span>
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={writtenOff}
-                onChange={(e) => setWrittenOff(e.target.checked)}
-                className="rounded border-[#2f3f56] text-[#005bbb] focus:ring-offset-[#1a2638] bg-[#132238] h-4 w-4"
-              />
-              <span>Written-off</span>
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={showOnBill}
-                onChange={(e) => setShowOnBill(e.target.checked)}
-                className="rounded border-[#2f3f56] text-[#005bbb] focus:ring-offset-[#1a2638] bg-[#132238] h-4 w-4"
-              />
-              <span>Show this entry on the bill</span>
-            </label>
-          </div>
         </div>
 
-        {/* Footer Buttons */}
-        <div className="bg-[#132238] p-4 flex flex-wrap gap-2 justify-between border-t border-[#2c3d52] items-center">
-          <div className="flex gap-2">
-            <Button
-              onClick={() => saveTimeEntry({})}
-              className="bg-[#005bbb] text-white hover:bg-blue-600 font-bold px-5"
-            >
-              Save entry
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => saveTimeEntry({ createAnother: true })}
-              className="border-[#2f3f56] text-white hover:bg-[#202f46] bg-transparent"
-            >
-              Save and create another
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => saveTimeEntry({ duplicate: true })}
-              className="border-[#2f3f56] text-white hover:bg-[#202f46] bg-transparent hidden sm:inline-flex"
-            >
-              Save and duplicate
-            </Button>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              onClick={() => setDialogOpen(false)}
-              className="text-slate-300 hover:text-white hover:bg-[#202f46]"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleDelete}
-              className="bg-[#a61c28] hover:bg-red-700 text-white font-bold"
-            >
-              Delete
-            </Button>
-          </div>
+        {/* Checkboxes Row */}
+        <div className="flex flex-wrap gap-x-6 gap-y-2 pt-2 border-t border-[#2c3d52]/50 text-slate-300">
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={nonBillable}
+              onChange={(e) => setNonBillable(e.target.checked)}
+              className="rounded border-[#2f3f56] text-[#005bbb] focus:ring-offset-[#1a2638] bg-[#132238] h-4 w-4"
+            />
+            <span className="flex items-center gap-1">Non-billable</span>
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={writtenOff}
+              onChange={(e) => setWrittenOff(e.target.checked)}
+              className="rounded border-[#2f3f56] text-[#005bbb] focus:ring-offset-[#1a2638] bg-[#132238] h-4 w-4"
+            />
+            <span>Written-off</span>
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={showOnBill}
+              onChange={(e) => setShowOnBill(e.target.checked)}
+              className="rounded border-[#2f3f56] text-[#005bbb] focus:ring-offset-[#1a2638] bg-[#132238] h-4 w-4"
+            />
+            <span>Show this entry on the bill</span>
+          </label>
         </div>
-      </DialogContent>
+      </div>
+      {/* Footer Buttons */}
+      <div className="bg-[#132238] p-4 flex flex-wrap gap-2 justify-between border-t border-[#2c3d52] items-center">
+        <div className="flex gap-2">
+          <Button
+            onClick={() => saveTimeEntry({})}
+            className="bg-[#005bbb] text-white hover:bg-blue-600 font-bold px-5"
+          >
+            Save entry
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => saveTimeEntry({ createAnother: true })}
+            className="border-[#2f3f56] text-white hover:bg-[#202f46] bg-transparent"
+          >
+            Save and create another
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => saveTimeEntry({ duplicate: true })}
+            className="border-[#2f3f56] text-white hover:bg-[#202f46] bg-transparent hidden sm:inline-flex"
+          >
+            Save and duplicate
+          </Button>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => setDialogOpen(false)}
+            className="text-slate-300 hover:text-white hover:bg-[#202f46]"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            className="bg-[#a61c28] hover:bg-red-700 text-white font-bold"
+          >
+            Delete
+          </Button>
+        </div>
+      </div>
     </Dialog>
   );
 }
